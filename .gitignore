@@ -1,0 +1,19 @@
+# Compiled binaries
+*.o
+*.exe
+plant-sim/plant_sim
+
+# Python
+__pycache__/
+*.pyc
+
+# Java
+*.class
+*.jar
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
