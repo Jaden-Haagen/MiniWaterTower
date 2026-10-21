@@ -1,10 +1,10 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g
-LIBS = $(shell pkg-config --cflags --libs libmidbus)
+CFLAGS = -Wall -Wextra -g $(shell pkg-config --cflags libmodbus)
+LIBS = $(shell pkg-config --cflags --libs libmodbus)
 
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
-TARGET = plant-sim
+TARGET = main
 
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET) $(LIBS)
