@@ -15,7 +15,7 @@
 - [ ] Assign static IPs to: Pi, Laptop 1 (HMI), Laptop 2 (attacker/IDS) — write them down somewhere in `/docs`
 - [ ] Confirm all three devices can ping each other on the LAN
 - [ ] Decide: ROAS Pi for daily dev, Layer 3 switch reserved for Phase 4 session only
-
+- [ ] Add support for .env files for files to read and access info from
 ---
 
 ## Phase 1: Plant Simulator (C or C++)
@@ -27,9 +27,9 @@
 - [X] Run the loop on a fixed interval (e.g. 500ms) using `sleep`/`usleep`
 - [X] Test locally: connect with `mbpoll` or a simple Modbus client script and confirm you can read the register
 - [X] Test writing to the valve register manually and confirm the simulated level responds
-- [ ] Write a `Dockerfile` for the plant simulator
-- [ ] Build and run the container locally, confirm it still answers Modbus requests from the host
-- [ ] Commit code + Dockerfile to repo
+- [X] Write a `Dockerfile` for the plant simulator
+- [X] Build and run the container locally, confirm it still answers Modbus requests from the host
+- [X] Commit code + Dockerfile to repo
 
 ---
 

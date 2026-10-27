@@ -1,3 +1,7 @@
+# Environment files (all subfolders)
+.env
+**/.env
+
 # Compiled binaries
 *.o
 *.exe
