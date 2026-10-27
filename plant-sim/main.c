@@ -8,8 +8,11 @@
 //value for checking if program needs to end
 volatile sig_atomic_t run = 1;
 
+//modbus variables
 #define TANK_LEVEL_REGISTER 0
 #define VALVE_COIL 0
+
+int client_connected = 0;
 
 //constant values for the tank
 const float FILL_RATE = 0.5f;
@@ -33,7 +36,38 @@ void tankLevelCalc(float *TANK_LEVEL, bool VALVE_OPEN) {
     if (*TANK_LEVEL < TANK_MIN) *TANK_LEVEL = TANK_MIN;
 }
 
+//checks for a client connection 
+void modbus_connection(modbus_t *ctx, modbus_mapping_t *mb_mapping, int *server_socket, int *client_connected) {
+    if (!*client_connected) {
+        fd_set rfds;
+        struct timeval tv;
+        FD_ZERO(&rfds); //empty list to watch
+        FD_SET(*server_socket, &rfds); //add listening socket to list to watch
 
+        tv.tv_sec = 0; //wait 1 second for a connection
+        tv.tv_usec = 0; //no fractional seconds in wait time
+
+        int ret = select(*server_socket + 1, &rfds, NULL, NULL, &tv); //wait for a connection or timeout
+
+        if (ret > 0) {
+            if (modbus_tcp_accept(ctx, server_socket) != -1) {
+                *client_connected = 1;
+                printf("Client connected.\n");
+            }
+        } 
+    } else {
+        uint8_t query[MODBUS_TCP_MAX_ADU_LENGTH];
+        int rc = modbus_receive(ctx, query);
+
+        if (rc > 0) {
+            modbus_reply(ctx, query, rc, mb_mapping);
+        } else if (rc == -1) {
+            printf("Client disconnected.\n");
+            modbus_close(ctx);  // close this client's connection cleanly
+            *client_connected = 0;
+        }
+    }
+}
 int main() {
     signal(SIGINT, end_program); //catch CTRL + C for ending the script
 
@@ -58,13 +92,6 @@ int main() {
         return -1;
     }
 
-    //modbus_tcp_accept(ctx, &server_socket); //Accept the incoming connection
-    if (modbus_tcp_accept(ctx, &server_socket) == -1) {
-        fprintf(stderr, "Failed to accept: %s\n", modbus_strerror(errno));
-        modbus_mapping_free(mb_mapping);
-        modbus_free(ctx);
-        return -1;
-    }
     //variables for the tank level and valve state
     float TANK_LEVEL = 0;
     bool VALVE_OPEN = true;
@@ -72,22 +99,17 @@ int main() {
     int millisecs = 500; //Default sleep time in milliseconds
     //loop for updating the tank level
     while (run) {
+        
+
         tankLevelCalc(&TANK_LEVEL, VALVE_OPEN); //Update the tank level based on the valve state
         
         mb_mapping->tab_registers[TANK_LEVEL_REGISTER] = (uint16_t)(TANK_LEVEL * 100); //Store the tank level in the holding register (scaled by 100 to preserve 2 decimal places)
         VALVE_OPEN = mb_mapping->tab_bits[VALVE_COIL]; //Update the valve state based on coil value
         
-        uint8_t query[MODBUS_TCP_MAX_ADU_LENGTH];
-        int rc = modbus_receive(ctx, query);
-        if (rc > 0) {
-            modbus_reply(ctx, query, rc, mb_mapping);
-        } else if (rc == -1) {
-            printf("Client disconnected.\n");
-            modbus_close(ctx);  // close this client's connection cleanly
-            break; // drop back to outer loop, wait for next connection
-        }
-
         printf("Tank level: %.2f\n", TANK_LEVEL); //Print the current level
+
+        modbus_connection(ctx, mb_mapping, &server_socket, &client_connected); //Check for a client connection and handle requests
+
         usleep(millisecs * 1000); //sleeps for specified length of milliseconds
     }
 

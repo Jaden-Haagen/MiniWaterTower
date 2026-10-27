@@ -8,9 +8,9 @@
 
 - [X] Pick a repo name and create it (e.g. `MiniWaterTower`)
 - [X] Create folder structure: `/plant-sim`, `/plc`, `/hmi`, `/attacker`, `/ids`, `/docs`, `/diagrams`
-- [ ] Install Docker Desktop (or Docker Engine) on your laptop
-- [ ] Install Docker Engine on the Raspberry Pi (`curl -sSL get.docker.com | sh`)
-- [ ] Confirm `docker buildx` is available (`docker buildx version`) — needed for ARM builds later
+- [X] Install Docker Desktop (or Docker Engine) on your laptop
+- [X] Install Docker Engine on the Raspberry Pi (`curl -sSL get.docker.com | sh`)
+- [X] Confirm `docker buildx` is available (`docker buildx version`) — needed for ARM builds later
 - [ ] Create a free Docker Hub account (or plan to use `docker save`/`scp` instead)
 - [ ] Assign static IPs to: Pi, Laptop 1 (HMI), Laptop 2 (attacker/IDS) — write them down somewhere in `/docs`
 - [ ] Confirm all three devices can ping each other on the LAN
@@ -23,10 +23,10 @@
 - [X] Install `libmodbus` dev headers on your laptop (`apt install libmodbus-dev` or build from source)
 - [X] Write a `tank_level` float variable and a `valve_open` boolean
 - [X] Write the physics loop: level rises when valve open, drains at constant rate otherwise
-- [ ] Expose `tank_level` and `valve_open` as Modbus registers via a Modbus TCP **slave/server**
+- [X] Expose `tank_level` and `valve_open` as Modbus registers via a Modbus TCP **slave/server**
 - [X] Run the loop on a fixed interval (e.g. 500ms) using `sleep`/`usleep`
 - [X] Test locally: connect with `mbpoll` or a simple Modbus client script and confirm you can read the register
-- [ ] Test writing to the valve register manually and confirm the simulated level responds
+- [X] Test writing to the valve register manually and confirm the simulated level responds
 - [ ] Write a `Dockerfile` for the plant simulator
 - [ ] Build and run the container locally, confirm it still answers Modbus requests from the host
 - [ ] Commit code + Dockerfile to repo
