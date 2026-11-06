@@ -1,3 +1,5 @@
+How to run -- (ensure docker is installed) in the plant-sim folder run 'docker build -t plant-sim .' and 'docker run plant-sim'
+
 # Mini Water Tower Range — Project Checklist
 
 *A hands-on ICS/SCADA lab built on a Raspberry Pi + 2 PCs/laptops, using C, Python, and Java*
